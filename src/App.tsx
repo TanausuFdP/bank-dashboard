@@ -1,11 +1,18 @@
-import { Button } from '@heroui/react'
+import BalanceOverview from './components/BalanceOverview'
+import CreateTransactionForm from './components/CreateTransactionForm'
+import TransactionsList from './components/TransactionsList'
 
 function App() {
   return (
-    <>
-      <h1 className="text-2xl font-bold">Tailwind OK</h1>
-      <Button>Click me</Button>
-    </>
+    <main className="mx-auto max-w-xl space-y-6 p-6">
+      <h1 className="text-2xl font-bold">Banking Dashboard</h1>
+
+      <BalanceOverview />
+
+      <CreateTransactionForm />
+
+      <TransactionsList />
+    </main>
   )
 }
 

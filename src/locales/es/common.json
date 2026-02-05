@@ -1,5 +1,17 @@
 {
-  "app_title": "Panel Bancario",
-  "transactions_title": "Transacciones",
-  "transactions_add": "Añadir transacción"
+   "transactions": {
+    "empty": "No hay transacciones todavía",
+    "delete": "Eliminar",
+    "description": "Descripción",
+    "amount": "Cantidad",
+    "date": "Fecha",
+    "deposit": "Ingreso",
+    "withdrawal": "Gasto",
+    "add": "Añadir transacción"
+  },
+  "balance": {
+    "title": "Balance",
+    "income": "Ingresos",
+    "expenses": "Gastos"
+  }
 }
