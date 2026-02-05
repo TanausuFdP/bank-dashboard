@@ -1,6 +1,9 @@
 import { HeroUIProvider } from '@heroui/react'
 import { ThemeProvider } from 'next-themes'
 import '../app/i18n'
+import { Provider } from 'react-redux'
+
+import { store } from '@/store'
 
 type Props = {
   children: React.ReactNode
@@ -8,10 +11,12 @@ type Props = {
 
 export function AppProviders({ children }: Props) {
   return (
-    <HeroUIProvider>
-      <ThemeProvider enableSystem attribute="class" defaultTheme="system">
-        {children}
-      </ThemeProvider>
-    </HeroUIProvider>
+    <Provider store={store}>
+      <HeroUIProvider>
+        <ThemeProvider enableSystem attribute="class" defaultTheme="system">
+          {children}
+        </ThemeProvider>
+      </HeroUIProvider>
+    </Provider>
   )
 }
