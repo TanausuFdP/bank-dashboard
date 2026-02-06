@@ -29,7 +29,9 @@ export default function CreateTransactionForm({ transaction, onSuccess }: Props)
   const [description, setDescription] = useState(transaction?.description ?? '')
   const [amount, setAmount] = useState(transaction ? Math.abs(transaction.amount).toString() : '')
   const [type, setType] = useState<TransactionType>(transaction?.type ?? TransactionType.DEPOSIT)
-  const [date, setDate] = useState(transaction?.date ?? new Date().toISOString().slice(0, 10))
+  const [dateTime, setDateTime] = useState(
+    transaction?.date ? transaction.date.slice(0, 16) : new Date().toISOString().slice(0, 16)
+  )
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -38,12 +40,14 @@ export default function CreateTransactionForm({ transaction, onSuccess }: Props)
 
     if (!numericAmount) return
 
+    const isoDate = new Date(dateTime).toISOString()
+
     const payload = {
       id: transaction?.id ?? uuid(),
       description,
       amount: type === TransactionType.DEPOSIT ? Math.abs(numericAmount) : -Math.abs(numericAmount),
       type: numericAmount < 0 ? TransactionType.WITHDRAWAL : type,
-      date,
+      date: isoDate,
       createdAt: transaction?.createdAt ?? new Date().toISOString(),
     }
 
@@ -119,9 +123,9 @@ export default function CreateTransactionForm({ transaction, onSuccess }: Props)
           classNames={{ input: 'outline-none' }}
           label={t('transactions.date')}
           size="lg"
-          type="date"
-          value={date}
-          onValueChange={setDate}
+          type="datetime-local"
+          value={dateTime}
+          onValueChange={setDateTime}
         />
       </CardBody>
       <CardFooter className="px-0 justify-end">
