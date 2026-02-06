@@ -70,7 +70,12 @@ export default function CreateTransactionForm() {
           <SelectItem key={TransactionType.WITHDRAWAL}>{t('transactions.withdrawal')}</SelectItem>
         </Select>
 
-        <Button color="primary" startContent={<IconPlus size={18} />} type="submit">
+        <Button
+          aria-label={t('transactions.add')}
+          color="primary"
+          startContent={<IconPlus size={18} />}
+          type="submit"
+        >
           {t('transactions.add')}
         </Button>
       </CardBody>
