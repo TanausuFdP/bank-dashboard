@@ -1,4 +1,5 @@
 import type { AppDispatch } from '@/store'
+import type { Transaction } from '@/types/models'
 
 import { useState } from 'react'
 import { useDispatch } from 'react-redux'
@@ -7,17 +8,23 @@ import { v4 as uuid } from 'uuid'
 import { Button, Card, CardBody, Input, Select, SelectItem } from '@heroui/react'
 import { IconPlus } from '@tabler/icons-react'
 
-import { addTransaction } from '@/store/transactionsSlice'
+import { addTransaction, updateTransaction } from '@/store/transactionsSlice'
 import { TransactionType } from '@/types/enums'
 
-export default function CreateTransactionForm() {
+type Props = {
+  transaction?: Transaction | null
+  onSuccess?: () => void
+}
+
+export default function CreateTransactionForm({ transaction, onSuccess }: Props) {
   const { t } = useTranslation()
+
   const dispatch = useDispatch<AppDispatch>()
 
-  const [description, setDescription] = useState('')
-  const [amount, setAmount] = useState('')
-  const [type, setType] = useState<TransactionType>(TransactionType.DEPOSIT)
-  const [date, setDate] = useState(new Date().toISOString().slice(0, 10))
+  const [description, setDescription] = useState(transaction?.description ?? '')
+  const [amount, setAmount] = useState(transaction ? Math.abs(transaction.amount).toString() : '')
+  const [type, setType] = useState<TransactionType>(transaction?.type ?? TransactionType.DEPOSIT)
+  const [date, setDate] = useState(transaction?.date ?? new Date().toISOString().slice(0, 10))
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -26,19 +33,22 @@ export default function CreateTransactionForm() {
 
     if (!numericAmount || numericAmount <= 0) return
 
-    dispatch(
-      addTransaction({
-        id: uuid(),
-        description,
-        amount: type === TransactionType.DEPOSIT ? numericAmount : -numericAmount,
-        type,
-        date,
-        createdAt: new Date().toISOString(),
-      })
-    )
+    const payload = {
+      id: transaction?.id ?? uuid(),
+      description,
+      amount: type === TransactionType.DEPOSIT ? numericAmount : -numericAmount,
+      type,
+      date,
+      createdAt: transaction?.createdAt ?? new Date().toISOString(),
+    }
 
-    setDescription('')
-    setAmount('')
+    if (transaction) {
+      dispatch(updateTransaction(payload))
+    } else {
+      dispatch(addTransaction(payload))
+    }
+
+    onSuccess?.()
   }
 
   return (

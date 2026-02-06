@@ -1,14 +1,19 @@
 import type { RootState, AppDispatch } from '@/store'
+import type { Transaction } from '@/types/models'
 
 import { useDispatch, useSelector } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 import { Button, Card, CardBody } from '@heroui/react'
-import { IconTrash } from '@tabler/icons-react'
+import { IconPencil, IconTrash } from '@tabler/icons-react'
 
 import { deleteTransaction } from '@/store/transactionsSlice'
 import { TransactionType } from '@/types/enums'
 
-export default function TransactionsList() {
+type Props = {
+  onEdit: (transaction: Transaction) => void
+}
+
+export default function TransactionsList({ onEdit }: Props) {
   const { t } = useTranslation()
   const dispatch = useDispatch<AppDispatch>()
   const transactions = useSelector((state: RootState) => state.transactions.items)
@@ -36,6 +41,15 @@ export default function TransactionsList() {
 
               <Button
                 isIconOnly
+                aria-label={t('transactions.edit')}
+                variant="light"
+                onPress={() => onEdit(tn)}
+              >
+                <IconPencil size={18} />
+              </Button>
+              <Button
+                isIconOnly
+                aria-label={t('transactions.delete')}
                 color="danger"
                 variant="light"
                 onPress={() => dispatch(deleteTransaction(tn.id))}

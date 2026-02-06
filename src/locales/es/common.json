@@ -8,7 +8,8 @@
     "deposit": "Ingreso",
     "withdrawal": "Gasto",
     "add": "Añadir transacción",
-    "type": "Tipo"
+    "type": "Tipo",
+    "edit": "Editar"
   },
   "balance": {
     "title": "Balance",
