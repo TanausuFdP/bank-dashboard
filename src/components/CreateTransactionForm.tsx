@@ -20,9 +20,15 @@ type Props = {
   transaction?: Transaction | null
   onSuccess?: () => void
   amountRef?: React.RefObject<HTMLInputElement | null>
+  isClone?: boolean
 }
 
-export default function CreateTransactionForm({ transaction, onSuccess, amountRef }: Props) {
+export default function CreateTransactionForm({
+  transaction,
+  onSuccess,
+  amountRef,
+  isClone,
+}: Props) {
   const { t } = useTranslation()
 
   const dispatch = useDispatch<AppDispatch>()
@@ -48,7 +54,7 @@ export default function CreateTransactionForm({ transaction, onSuccess, amountRe
     const isoDate = new Date(dateTime).toISOString()
 
     const payload = {
-      id: transaction?.id ?? uuid(),
+      id: isClone ? uuid() : (transaction?.id ?? uuid()),
       description,
       amount: type === TransactionType.DEPOSIT ? Math.abs(numericAmount) : -Math.abs(numericAmount),
       type: numericAmount < 0 ? TransactionType.WITHDRAWAL : type,
@@ -56,7 +62,7 @@ export default function CreateTransactionForm({ transaction, onSuccess, amountRe
       createdAt: transaction?.createdAt ?? new Date().toISOString(),
     }
 
-    if (transaction) {
+    if (transaction && !isClone) {
       dispatch(updateTransaction(payload))
     } else {
       dispatch(addTransaction(payload))

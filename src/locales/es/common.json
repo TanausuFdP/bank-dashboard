@@ -19,7 +19,8 @@
     "edit_transaction": "Editar transacción",
     "actions": "Acciones",
     "save": "Guardar",
-    "delete_confirm_with_name": "¿Seguro que quieres eliminar \"{{description}}\"?"
+    "delete_confirm_with_name": "¿Seguro que quieres eliminar \"{{description}}\"?",
+    "clone": "Duplicar"
   },
   "balance": {
     "title": "Balance",

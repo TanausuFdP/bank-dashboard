@@ -10,11 +10,12 @@ type Props = {
   isOpen: boolean
   onClose: () => void
   transaction?: Transaction | null
+  isClone?: boolean
 }
 
-export default function TransactionModal({ isOpen, onClose, transaction }: Props) {
+export default function TransactionModal({ isOpen, onClose, transaction, isClone }: Props) {
   const { t } = useTranslation()
-  const isEdit = Boolean(transaction)
+  const isEdit = Boolean(transaction) && !isClone
   const amountRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
@@ -35,6 +36,7 @@ export default function TransactionModal({ isOpen, onClose, transaction }: Props
         <ModalBody>
           <CreateTransactionForm
             amountRef={amountRef}
+            isClone={isClone}
             transaction={transaction}
             onSuccess={onClose}
           />

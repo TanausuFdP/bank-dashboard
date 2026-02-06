@@ -16,6 +16,7 @@ import {
 import {
   IconCircleArrowDownRightFilled,
   IconCircleArrowUpRightFilled,
+  IconCopy,
   IconDotsVertical,
   IconPencil,
   IconTrash,
@@ -30,9 +31,10 @@ import { formatPrice } from '@/utils/helper'
 
 type Props = {
   onEdit: (transaction: Transaction) => void
+  onClone: (transaction: Transaction) => void
 }
 
-export default function TransactionsList({ onEdit }: Props) {
+export default function TransactionsList({ onEdit, onClone }: Props) {
   const { t } = useTranslation()
   const [deleteTarget, setDeleteTarget] = useState<Transaction | null>(null)
   const dispatch = useDispatch<AppDispatch>()
@@ -121,6 +123,8 @@ export default function TransactionsList({ onEdit }: Props) {
                                 onAction={key => {
                                   if (key === 'edit') {
                                     onEdit(tn)
+                                  } else if (key === 'clone') {
+                                    onClone(tn)
                                   } else if (key === 'delete') {
                                     setDeleteTarget(tn)
                                   }
@@ -128,10 +132,16 @@ export default function TransactionsList({ onEdit }: Props) {
                               >
                                 <DropdownItem
                                   key="edit"
-                                  showDivider
                                   startContent={<IconPencil className="opacity-70" size={18} />}
                                 >
                                   {t('transactions.edit')}
+                                </DropdownItem>
+                                <DropdownItem
+                                  key="clone"
+                                  showDivider
+                                  startContent={<IconCopy className="opacity-70" size={18} />}
+                                >
+                                  {t('transactions.clone')}
                                 </DropdownItem>
                                 <DropdownItem
                                   key="delete"
