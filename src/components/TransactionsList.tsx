@@ -3,11 +3,30 @@ import type { Transaction } from '@/types/models'
 
 import { useDispatch, useSelector } from 'react-redux'
 import { useTranslation } from 'react-i18next'
-import { Button, Card, CardBody } from '@heroui/react'
-import { IconPencil, IconTrash } from '@tabler/icons-react'
+import {
+  Button,
+  Card,
+  CardBody,
+  Divider,
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownTrigger,
+} from '@heroui/react'
+import {
+  IconCircleArrowDownRightFilled,
+  IconCircleArrowUpRightFilled,
+  IconDotsVertical,
+  IconPencil,
+  IconTrash,
+} from '@tabler/icons-react'
+import { useState } from 'react'
+
+import YouSureModal from './YouSureModal'
 
 import { deleteTransaction } from '@/store/transactionsSlice'
 import { TransactionType } from '@/types/enums'
+import { formatPrice } from '@/utils/helper'
 
 type Props = {
   onEdit: (transaction: Transaction) => void
@@ -15,6 +34,7 @@ type Props = {
 
 export default function TransactionsList({ onEdit }: Props) {
   const { t } = useTranslation()
+  const [deleteTarget, setDeleteTarget] = useState<Transaction | null>(null)
   const dispatch = useDispatch<AppDispatch>()
   const transactions = useSelector((state: RootState) => state.transactions.items)
 
@@ -22,44 +42,130 @@ export default function TransactionsList({ onEdit }: Props) {
     return <p className="text-gray-500">{t('transactions.empty')}</p>
   }
 
+  const grouped = Object.values(
+    transactions.reduce<Record<string, Transaction[]>>((acc, tn) => {
+      const dateKey = tn.date.split('T')[0]
+
+      acc[dateKey] ??= []
+      acc[dateKey].push(tn)
+
+      return acc
+    }, {})
+  ).sort((a, b) => b[0].date.localeCompare(a[0].date))
+
   return (
-    <div className="space-y-2">
-      {transactions.map(tn => (
-        <Card key={tn.id}>
-          <CardBody className="flex flex-row items-center justify-between">
-            <div>
-              <p className="font-medium">{tn.description}</p>
-              <p className="text-sm text-gray-500">{tn.date}</p>
-            </div>
+    <>
+      <div className="space-y-6">
+        {grouped.map(group => {
+          const dateKey = group[0].date.split('T')[0]
 
-            <div className="flex items-center gap-4">
-              <span
-                className={tn.type === TransactionType.DEPOSIT ? 'text-green-600' : 'text-red-600'}
-              >
-                {tn.amount} €
-              </span>
+          const sortedGroup = [...group].sort((a, b) => a.date.localeCompare(b.date))
 
-              <Button
-                isIconOnly
-                aria-label={t('transactions.edit')}
-                variant="light"
-                onPress={() => onEdit(tn)}
-              >
-                <IconPencil size={18} />
-              </Button>
-              <Button
-                isIconOnly
-                aria-label={t('transactions.delete')}
-                color="danger"
-                variant="light"
-                onPress={() => dispatch(deleteTransaction(tn.id))}
-              >
-                <IconTrash size={18} />
-              </Button>
+          const balance = sortedGroup.reduce((acc, tn) => acc + tn.amount, 0)
+
+          return (
+            <div key={dateKey} className="space-y-2">
+              <div className="flex items-center justify-between px-1">
+                <span className="text-sm font-semibold text-gray-600">{dateKey}</span>
+                <span
+                  className={
+                    balance >= 0 ? 'text-green-600 font-medium' : 'text-red-600 font-medium'
+                  }
+                >
+                  {formatPrice(balance)}
+                </span>
+              </div>
+
+              <Card className="rounded-3xl" shadow="none">
+                <CardBody className="space-y-3">
+                  {sortedGroup.map((tn, index) => {
+                    const time = tn.date.split('T')[1]?.slice(0, 5)
+
+                    return (
+                      <div key={tn.id} className="space-y-3">
+                        {index > 0 && <Divider />}
+
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-4">
+                            {tn.type === TransactionType.DEPOSIT ? (
+                              <IconCircleArrowUpRightFilled className="text-green-600" size={36} />
+                            ) : (
+                              <IconCircleArrowDownRightFilled className="text-red-600" size={36} />
+                            )}
+
+                            <div>
+                              <p className="font-medium">{tn.description}</p>
+                              <p className="text-sm text-gray-500">{time}</p>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center gap-4">
+                            <span
+                              className={
+                                tn.type === TransactionType.DEPOSIT
+                                  ? 'text-green-600'
+                                  : 'text-red-600'
+                              }
+                            >
+                              {formatPrice(tn.amount)}
+                            </span>
+
+                            <Dropdown>
+                              <DropdownTrigger>
+                                <Button isIconOnly size="sm" variant="light">
+                                  <IconDotsVertical className="text-default-400" />
+                                </Button>
+                              </DropdownTrigger>
+                              <DropdownMenu
+                                aria-label={t('transactions.actions')}
+                                onAction={key => {
+                                  if (key === 'edit') {
+                                    onEdit(tn)
+                                  } else if (key === 'delete') {
+                                    setDeleteTarget(tn)
+                                  }
+                                }}
+                              >
+                                <DropdownItem
+                                  key="edit"
+                                  showDivider
+                                  startContent={<IconPencil className="opacity-70" size={18} />}
+                                >
+                                  {t('transactions.edit')}
+                                </DropdownItem>
+                                <DropdownItem
+                                  key="delete"
+                                  className="!text-danger"
+                                  startContent={<IconTrash size={18} />}
+                                >
+                                  {t('transactions.delete')}
+                                </DropdownItem>
+                              </DropdownMenu>
+                            </Dropdown>
+                          </div>
+                        </div>
+                      </div>
+                    )
+                  })}
+                </CardBody>
+              </Card>
             </div>
-          </CardBody>
-        </Card>
-      ))}
-    </div>
+          )
+        })}
+      </div>
+      <YouSureModal
+        description={t('transactions.delete_confirm_with_name', {
+          description: deleteTarget?.description,
+        })}
+        isOpen={!!deleteTarget}
+        submitLabel={t('transactions.delete')}
+        onClose={() => setDeleteTarget(null)}
+        onSubmit={() => {
+          if (!deleteTarget) return
+          dispatch(deleteTransaction(deleteTarget.id))
+          setDeleteTarget(null)
+        }}
+      />
+    </>
   )
 }

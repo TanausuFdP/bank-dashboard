@@ -16,9 +16,11 @@ export default function TransactionModal({ isOpen, onClose, transaction }: Props
   const isEdit = Boolean(transaction)
 
   return (
-    <Modal isOpen={isOpen} onOpenChange={onClose}>
+    <Modal className="rounded-3xl" isOpen={isOpen} onOpenChange={onClose}>
       <ModalContent>
-        <ModalHeader>{isEdit ? t('transactions.edit') : t('transactions.add')}</ModalHeader>
+        <ModalHeader>
+          {isEdit ? t('transactions.edit_transaction') : t('transactions.add')}
+        </ModalHeader>
 
         <ModalBody>
           <CreateTransactionForm transaction={transaction} onSuccess={onClose} />

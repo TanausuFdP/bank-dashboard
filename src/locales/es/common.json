@@ -1,5 +1,11 @@
 {
-   "transactions": {
+  "common": {
+    "app_title": "KenTech Bank",
+    "you_sure": "¿Estás seguro?",
+    "cancel": "Cancelar",
+    "submit": "Confirmar"
+  },
+  "transactions": {
     "empty": "No hay transacciones todavía",
     "delete": "Eliminar",
     "description": "Descripción",
@@ -9,7 +15,11 @@
     "withdrawal": "Gasto",
     "add": "Añadir transacción",
     "type": "Tipo",
-    "edit": "Editar"
+    "edit": "Editar",
+    "edit_transaction": "Editar transacción",
+    "actions": "Acciones",
+    "save": "Guardar",
+    "delete_confirm_with_name": "¿Seguro que quieres eliminar \"{{description}}\"?"
   },
   "balance": {
     "title": "Balance",

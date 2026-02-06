@@ -5,11 +5,16 @@ import { useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 import { v4 as uuid } from 'uuid'
-import { Button, Card, CardBody, Input, Select, SelectItem } from '@heroui/react'
-import { IconPlus } from '@tabler/icons-react'
+import { Button, Card, CardBody, CardFooter, Input, Select, SelectItem } from '@heroui/react'
+import {
+  IconCircleArrowDownRightFilled,
+  IconCircleArrowUpRightFilled,
+  IconDeviceFloppy,
+} from '@tabler/icons-react'
 
 import { addTransaction, updateTransaction } from '@/store/transactionsSlice'
 import { TransactionType } from '@/types/enums'
+import { formatPrice } from '@/utils/helper'
 
 type Props = {
   transaction?: Transaction | null
@@ -31,13 +36,13 @@ export default function CreateTransactionForm({ transaction, onSuccess }: Props)
 
     const numericAmount = Number(amount)
 
-    if (!numericAmount || numericAmount <= 0) return
+    if (!numericAmount) return
 
     const payload = {
       id: transaction?.id ?? uuid(),
       description,
-      amount: type === TransactionType.DEPOSIT ? numericAmount : -numericAmount,
-      type,
+      amount: type === TransactionType.DEPOSIT ? Math.abs(numericAmount) : -Math.abs(numericAmount),
+      type: numericAmount < 0 ? TransactionType.WITHDRAWAL : type,
       date,
       createdAt: transaction?.createdAt ?? new Date().toISOString(),
     }
@@ -52,43 +57,84 @@ export default function CreateTransactionForm({ transaction, onSuccess }: Props)
   }
 
   return (
-    <Card>
-      <CardBody as="form" className="gap-3" onSubmit={submit}>
-        <Input
-          isRequired
-          label={t('transactions.description')}
-          value={description}
-          onValueChange={setDescription}
-        />
+    <Card as="form" shadow="none" onSubmit={submit}>
+      <CardBody className="gap-3 px-0">
+        <Select
+          disallowEmptySelection
+          classNames={{
+            value: type === TransactionType.DEPOSIT ? '!text-green-500' : '!text-red-500',
+          }}
+          label={t('transactions.type')}
+          selectedKeys={[type]}
+          size="lg"
+          startContent={
+            type === TransactionType.DEPOSIT ? (
+              <IconCircleArrowUpRightFilled className="text-green-500" size={24} />
+            ) : (
+              <IconCircleArrowDownRightFilled className="text-red-500" size={24} />
+            )
+          }
+          onSelectionChange={keys => setType(Array.from(keys)[0] as TransactionType)}
+        >
+          <SelectItem
+            key={TransactionType.DEPOSIT}
+            className="!text-green-500"
+            startContent={<IconCircleArrowUpRightFilled size={18} />}
+          >
+            {t('transactions.deposit')}
+          </SelectItem>
+          <SelectItem
+            key={TransactionType.WITHDRAWAL}
+            className="!text-red-500"
+            startContent={<IconCircleArrowDownRightFilled size={18} />}
+          >
+            {t('transactions.withdrawal')}
+          </SelectItem>
+        </Select>
 
         <Input
           isRequired
+          classNames={{ input: 'outline-none' }}
+          description={formatPrice(
+            type === TransactionType.DEPOSIT ? Number(amount) : -Math.abs(Number(amount))
+          )}
           label={t('transactions.amount')}
+          size="lg"
+          startContent={<span className="text-default-400">€</span>}
           type="number"
           value={amount}
           onValueChange={setAmount}
         />
 
-        <Input label={t('transactions.date')} type="date" value={date} onValueChange={setDate} />
+        <Input
+          isRequired
+          classNames={{ input: 'outline-none' }}
+          label={t('transactions.description')}
+          size="lg"
+          value={description}
+          onValueChange={setDescription}
+        />
 
-        <Select
-          label={t('transactions.type')}
-          selectedKeys={[type]}
-          onSelectionChange={keys => setType(Array.from(keys)[0] as TransactionType)}
-        >
-          <SelectItem key={TransactionType.DEPOSIT}>{t('transactions.deposit')}</SelectItem>
-          <SelectItem key={TransactionType.WITHDRAWAL}>{t('transactions.withdrawal')}</SelectItem>
-        </Select>
-
+        <Input
+          classNames={{ input: 'outline-none' }}
+          label={t('transactions.date')}
+          size="lg"
+          type="date"
+          value={date}
+          onValueChange={setDate}
+        />
+      </CardBody>
+      <CardFooter className="px-0 justify-end">
         <Button
-          aria-label={t('transactions.add')}
+          className="text-md"
           color="primary"
-          startContent={<IconPlus size={18} />}
+          isDisabled={!description || !amount}
+          startContent={<IconDeviceFloppy size={20} />}
           type="submit"
         >
-          {t('transactions.add')}
+          {t('transactions.save')}
         </Button>
-      </CardBody>
+      </CardFooter>
     </Card>
   )
 }

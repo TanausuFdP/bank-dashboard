@@ -8,7 +8,17 @@ const config: Config = {
   theme: {
     extend: {},
   },
-  plugins: [heroui()],
+  plugins: [
+    heroui({
+      themes: {
+        light: {
+          colors: {
+            background: '#f2f2f5',
+          },
+        },
+      },
+    }),
+  ],
 }
 
 export default config
