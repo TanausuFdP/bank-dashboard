@@ -7,7 +7,8 @@
     "date": "Fecha",
     "deposit": "Ingreso",
     "withdrawal": "Gasto",
-    "add": "Añadir transacción"
+    "add": "Añadir transacción",
+    "type": "Tipo"
   },
   "balance": {
     "title": "Balance",

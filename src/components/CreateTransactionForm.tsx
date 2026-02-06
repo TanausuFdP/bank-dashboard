@@ -62,7 +62,7 @@ export default function CreateTransactionForm() {
         <Input label={t('transactions.date')} type="date" value={date} onValueChange={setDate} />
 
         <Select
-          label="Tipo"
+          label={t('transactions.type')}
           selectedKeys={[type]}
           onSelectionChange={keys => setType(Array.from(keys)[0] as TransactionType)}
         >
