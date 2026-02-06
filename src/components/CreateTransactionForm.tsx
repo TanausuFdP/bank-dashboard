@@ -19,9 +19,10 @@ import { formatPrice } from '@/utils/helper'
 type Props = {
   transaction?: Transaction | null
   onSuccess?: () => void
+  amountRef?: React.RefObject<HTMLInputElement | null>
 }
 
-export default function CreateTransactionForm({ transaction, onSuccess }: Props) {
+export default function CreateTransactionForm({ transaction, onSuccess, amountRef }: Props) {
   const { t } = useTranslation()
 
   const dispatch = useDispatch<AppDispatch>()
@@ -32,6 +33,10 @@ export default function CreateTransactionForm({ transaction, onSuccess }: Props)
   const [dateTime, setDateTime] = useState(
     transaction?.date ? transaction.date.slice(0, 16) : new Date().toISOString().slice(0, 16)
   )
+
+  const handleAmountChange = (value: string) => {
+    setAmount(value.replace(',', '.'))
+  }
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -97,6 +102,7 @@ export default function CreateTransactionForm({ transaction, onSuccess }: Props)
         </Select>
 
         <Input
+          ref={amountRef}
           isRequired
           classNames={{ input: 'outline-none' }}
           description={formatPrice(
@@ -105,9 +111,9 @@ export default function CreateTransactionForm({ transaction, onSuccess }: Props)
           label={t('transactions.amount')}
           size="lg"
           startContent={<span className="text-default-400">€</span>}
-          type="number"
+          type="text"
           value={amount}
-          onValueChange={setAmount}
+          onValueChange={handleAmountChange}
         />
 
         <Input
