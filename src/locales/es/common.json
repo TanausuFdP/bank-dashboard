@@ -3,7 +3,9 @@
     "app_title": "KenTech Bank",
     "you_sure": "¿Estás seguro?",
     "cancel": "Cancelar",
-    "submit": "Confirmar"
+    "submit": "Confirmar",
+    "next": "Siguiente",
+    "prev": "Anterior"
   },
   "transactions": {
     "empty": "No hay transacciones todavía",

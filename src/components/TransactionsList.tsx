@@ -14,6 +14,8 @@ import {
   DropdownTrigger,
 } from '@heroui/react'
 import {
+  IconChevronLeft,
+  IconChevronRight,
   IconCircleArrowDownRightFilled,
   IconCircleArrowUpRightFilled,
   IconCopy,
@@ -25,10 +27,10 @@ import { useState } from 'react'
 
 import YouSureModal from './YouSureModal'
 
-import { deleteTransaction } from '@/store/transactionsSlice'
+import { deleteTransaction, setPage } from '@/store/transactionsSlice'
 import { TransactionType } from '@/types/enums'
 import { formatPrice } from '@/utils/helper'
-import { selectFilteredTransactions } from '@/store/transactionsSelector'
+import { selectPaginatedTransactions, selectPaginationInfo } from '@/store/transactionsSelector'
 
 type Props = {
   onEdit: (transaction: Transaction) => void
@@ -37,9 +39,10 @@ type Props = {
 
 export default function TransactionsList({ onEdit, onClone }: Props) {
   const { t } = useTranslation()
-  const [deleteTarget, setDeleteTarget] = useState<Transaction | null>(null)
   const dispatch = useDispatch<AppDispatch>()
-  const transactions = useSelector(selectFilteredTransactions)
+  const transactions = useSelector(selectPaginatedTransactions)
+  const { page, totalPages, hasNext, hasPrev } = useSelector(selectPaginationInfo)
+  const [deleteTarget, setDeleteTarget] = useState<Transaction | null>(null)
 
   if (transactions.length === 0) {
     return <p className="text-gray-500">{t('transactions.empty')}</p>
@@ -54,7 +57,7 @@ export default function TransactionsList({ onEdit, onClone }: Props) {
 
       return acc
     }, {})
-  ).sort((a, b) => b[0].date.localeCompare(a[0].date))
+  )
 
   return (
     <>
@@ -62,9 +65,7 @@ export default function TransactionsList({ onEdit, onClone }: Props) {
         {grouped.map(group => {
           const dateKey = group[0].date.split('T')[0]
 
-          const sortedGroup = [...group].sort((a, b) => b.date.localeCompare(a.date))
-
-          const balance = sortedGroup.reduce((acc, tn) => acc + tn.amount, 0)
+          const balance = group.reduce((acc, tn) => acc + tn.amount, 0)
 
           return (
             <div key={dateKey} className="space-y-2">
@@ -81,7 +82,7 @@ export default function TransactionsList({ onEdit, onClone }: Props) {
 
               <Card className="rounded-3xl" shadow="none">
                 <CardBody className="space-y-3">
-                  {sortedGroup.map((tn, index) => {
+                  {group.map((tn, index) => {
                     const time = tn.date.split('T')[1]?.slice(0, 5)
 
                     return (
@@ -163,6 +164,38 @@ export default function TransactionsList({ onEdit, onClone }: Props) {
             </div>
           )
         })}
+
+        <div className="flex justify-between items-center pt-4">
+          <Button
+            className="text-sm"
+            color="primary"
+            isDisabled={!hasPrev}
+            radius="full"
+            size="sm"
+            startContent={<IconChevronLeft size={18} />}
+            variant="flat"
+            onPress={() => dispatch(setPage(page - 1))}
+          >
+            {t('common.prev')}
+          </Button>
+
+          <span className="text-sm text-gray-500">
+            {page} / {totalPages}
+          </span>
+
+          <Button
+            className="text-sm"
+            color="primary"
+            endContent={<IconChevronRight size={18} />}
+            isDisabled={!hasNext}
+            radius="full"
+            size="sm"
+            variant="flat"
+            onPress={() => dispatch(setPage(page + 1))}
+          >
+            {t('common.next')}
+          </Button>
+        </div>
       </div>
       <YouSureModal
         description={t('transactions.delete_confirm_with_name', {
