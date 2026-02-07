@@ -20,7 +20,8 @@
     "actions": "Acciones",
     "save": "Guardar",
     "delete_confirm_with_name": "¿Seguro que quieres eliminar \"{{description}}\"?",
-    "clone": "Duplicar"
+    "clone": "Duplicar",
+    "search": "Buscar..."
   },
   "balance": {
     "title": "Balance",

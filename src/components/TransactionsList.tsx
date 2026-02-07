@@ -1,4 +1,4 @@
-import type { RootState, AppDispatch } from '@/store'
+import type { AppDispatch } from '@/store'
 import type { Transaction } from '@/types/models'
 
 import { useDispatch, useSelector } from 'react-redux'
@@ -28,6 +28,7 @@ import YouSureModal from './YouSureModal'
 import { deleteTransaction } from '@/store/transactionsSlice'
 import { TransactionType } from '@/types/enums'
 import { formatPrice } from '@/utils/helper'
+import { selectFilteredTransactions } from '@/store/transactionsSelector'
 
 type Props = {
   onEdit: (transaction: Transaction) => void
@@ -38,7 +39,7 @@ export default function TransactionsList({ onEdit, onClone }: Props) {
   const { t } = useTranslation()
   const [deleteTarget, setDeleteTarget] = useState<Transaction | null>(null)
   const dispatch = useDispatch<AppDispatch>()
-  const transactions = useSelector((state: RootState) => state.transactions.items)
+  const transactions = useSelector(selectFilteredTransactions)
 
   if (transactions.length === 0) {
     return <p className="text-gray-500">{t('transactions.empty')}</p>
@@ -61,7 +62,7 @@ export default function TransactionsList({ onEdit, onClone }: Props) {
         {grouped.map(group => {
           const dateKey = group[0].date.split('T')[0]
 
-          const sortedGroup = [...group].sort((a, b) => a.date.localeCompare(b.date))
+          const sortedGroup = [...group].sort((a, b) => b.date.localeCompare(a.date))
 
           const balance = sortedGroup.reduce((acc, tn) => acc + tn.amount, 0)
 

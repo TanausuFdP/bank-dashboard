@@ -4,16 +4,35 @@ import { createSlice } from '@reduxjs/toolkit'
 
 import { loadTransactions, persistTransactions } from '@/services/transactionsStorage'
 
+type TransactionsFilters = {
+  search: string
+  type: 'all' | 'deposit' | 'withdrawal'
+  fromDate: string | null
+  toDate: string | null
+}
+
 type TransactionsState = {
   items: Transaction[]
   past: Transaction[] | null
   future: Transaction[] | null
+
+  filters: TransactionsFilters
+  page: number
+  pageSize: number
 }
 
 const initialState: TransactionsState = {
   items: loadTransactions(),
   past: null,
   future: null,
+  filters: {
+    search: '',
+    type: 'all',
+    fromDate: null,
+    toDate: null,
+  },
+  page: 1,
+  pageSize: 5,
 }
 
 const transactionsSlice = createSlice({
@@ -56,10 +75,39 @@ const transactionsSlice = createSlice({
       state.future = null
       persistTransactions(state.items)
     },
+
+    setSearch(state, action) {
+      state.filters.search = action.payload
+      state.page = 1
+    },
+
+    setType(state, action) {
+      state.filters.type = action.payload
+      state.page = 1
+    },
+
+    setDateRange(state, action) {
+      state.filters.fromDate = action.payload.from
+      state.filters.toDate = action.payload.to
+      state.page = 1
+    },
+
+    setPage(state, action) {
+      state.page = action.payload
+    },
   },
 })
 
-export const { addTransaction, updateTransaction, deleteTransaction, undo, redo } =
-  transactionsSlice.actions
+export const {
+  addTransaction,
+  updateTransaction,
+  deleteTransaction,
+  undo,
+  redo,
+  setSearch,
+  setType,
+  setDateRange,
+  setPage,
+} = transactionsSlice.actions
 
 export default transactionsSlice.reducer
