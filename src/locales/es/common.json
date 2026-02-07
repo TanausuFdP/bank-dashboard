@@ -21,7 +21,8 @@
     "save": "Guardar",
     "delete_confirm_with_name": "¿Seguro que quieres eliminar \"{{description}}\"?",
     "clone": "Duplicar",
-    "search": "Buscar..."
+    "search": "Buscar...",
+    "invalid_amount": "Introduce una cantidad válida"
   },
   "balance": {
     "title": "Balance",

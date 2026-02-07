@@ -110,10 +110,18 @@ export default function CreateTransactionForm({
         <Input
           ref={amountRef}
           isRequired
-          classNames={{ input: 'outline-none' }}
-          description={formatPrice(
-            type === TransactionType.DEPOSIT ? Number(amount) : -Math.abs(Number(amount))
-          )}
+          classNames={{
+            input: 'outline-none',
+            description: isNaN(Number(amount)) ? 'text-danger' : '',
+          }}
+          color={isNaN(Number(amount)) ? 'danger' : 'default'}
+          description={
+            isNaN(Number(amount))
+              ? t('transactions.invalid_amount')
+              : formatPrice(
+                  type === TransactionType.DEPOSIT ? Number(amount) : -Math.abs(Number(amount))
+                )
+          }
           label={t('transactions.amount')}
           size="lg"
           startContent={<span className="text-default-400">€</span>}
@@ -144,7 +152,7 @@ export default function CreateTransactionForm({
         <Button
           className="text-md"
           color="primary"
-          isDisabled={!description || !amount}
+          isDisabled={!description || !amount || isNaN(Number(amount)) || Number(amount) === 0}
           startContent={<IconDeviceFloppy size={20} />}
           type="submit"
         >
