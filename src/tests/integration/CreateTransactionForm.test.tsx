@@ -1,27 +1,21 @@
-import { render, screen, fireEvent } from '@testing-library/react'
-import { Provider } from 'react-redux'
+import { screen, fireEvent } from '@testing-library/react'
 
-import { store } from '@/store'
-import CreateTransactionForm from '@/components/CreateTransactionForm'
-import TransactionsList from '@/components/TransactionsList'
+import { renderWithProviders } from './helper'
 
-test('creates a new transaction', () => {
-  render(
-    <Provider store={store}>
-      <CreateTransactionForm />
-      <TransactionsList />
-    </Provider>
-  )
+import App from '@/App'
 
-  fireEvent.change(screen.getByLabelText(/description/i), {
+test('user can create a transaction from modal', async () => {
+  renderWithProviders(<App />)
+
+  fireEvent.click(screen.getAllByLabelText(/add/i)[0])
+
+  fireEvent.change(await screen.findByLabelText(/description/i), {
     target: { value: 'Test transaction' },
   })
 
-  fireEvent.change(screen.getByLabelText(/amount/i), {
-    target: { value: '100' },
-  })
+  fireEvent.change(screen.getByLabelText(/amount/i), { target: { value: '100' } })
 
-  fireEvent.click(screen.getByLabelText(/add/i))
+  fireEvent.click(await screen.findByRole('button', { name: /save/i }))
 
-  expect(screen.getByText('Test transaction')).toBeInTheDocument()
+  expect(await screen.findByText('Test transaction')).toBeInTheDocument()
 })

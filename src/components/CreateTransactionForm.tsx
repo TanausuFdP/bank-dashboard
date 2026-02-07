@@ -56,7 +56,7 @@ export default function CreateTransactionForm({
     const payload = {
       id: isClone ? uuid() : (transaction?.id ?? uuid()),
       description,
-      amount: type === TransactionType.DEPOSIT ? Math.abs(numericAmount) : -Math.abs(numericAmount),
+      amount: Math.abs(numericAmount),
       type: numericAmount < 0 ? TransactionType.WITHDRAWAL : type,
       date: isoDate,
       createdAt: transaction?.createdAt ?? new Date().toISOString(),
