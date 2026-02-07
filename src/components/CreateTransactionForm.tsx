@@ -1,84 +1,164 @@
 import type { AppDispatch } from '@/store'
+import type { Transaction } from '@/types/models'
 
 import { useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 import { v4 as uuid } from 'uuid'
-import { Button, Card, CardBody, Input, Select, SelectItem } from '@heroui/react'
-import { IconPlus } from '@tabler/icons-react'
+import { Button, Card, CardBody, CardFooter, Input, Select, SelectItem } from '@heroui/react'
+import {
+  IconCircleArrowDownRightFilled,
+  IconCircleArrowUpRightFilled,
+  IconDeviceFloppy,
+} from '@tabler/icons-react'
 
-import { addTransaction } from '@/store/transactionsSlice'
+import { addTransaction, updateTransaction } from '@/store/transactionsSlice'
 import { TransactionType } from '@/types/enums'
+import { formatPrice } from '@/utils/helper'
 
-export default function CreateTransactionForm() {
+type Props = {
+  transaction?: Transaction | null
+  onSuccess?: () => void
+  amountRef?: React.RefObject<HTMLInputElement | null>
+  isClone?: boolean
+}
+
+export default function CreateTransactionForm({
+  transaction,
+  onSuccess,
+  amountRef,
+  isClone,
+}: Props) {
   const { t } = useTranslation()
+
   const dispatch = useDispatch<AppDispatch>()
 
-  const [description, setDescription] = useState('')
-  const [amount, setAmount] = useState('')
-  const [type, setType] = useState<TransactionType>(TransactionType.DEPOSIT)
-  const [date, setDate] = useState(new Date().toISOString().slice(0, 10))
+  const [description, setDescription] = useState(transaction?.description ?? '')
+  const [amount, setAmount] = useState(transaction ? Math.abs(transaction.amount).toString() : '')
+  const [type, setType] = useState<TransactionType>(transaction?.type ?? TransactionType.DEPOSIT)
+  const [dateTime, setDateTime] = useState(
+    transaction?.date ? transaction.date.slice(0, 16) : new Date().toISOString().slice(0, 16)
+  )
+
+  const handleAmountChange = (value: string) => {
+    setAmount(value.replace(',', '.'))
+  }
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault()
 
     const numericAmount = Number(amount)
 
-    if (!numericAmount || numericAmount <= 0) return
+    if (!numericAmount) return
 
-    dispatch(
-      addTransaction({
-        id: uuid(),
-        description,
-        amount: type === TransactionType.DEPOSIT ? numericAmount : -numericAmount,
-        type,
-        date,
-        createdAt: new Date().toISOString(),
-      })
-    )
+    const isoDate = new Date(dateTime).toISOString()
 
-    setDescription('')
-    setAmount('')
+    const payload = {
+      id: isClone ? uuid() : (transaction?.id ?? uuid()),
+      description,
+      amount: Math.abs(numericAmount),
+      type: numericAmount < 0 ? TransactionType.WITHDRAWAL : type,
+      date: isoDate,
+      createdAt: transaction?.createdAt ?? new Date().toISOString(),
+    }
+
+    if (transaction && !isClone) {
+      dispatch(updateTransaction(payload))
+    } else {
+      dispatch(addTransaction(payload))
+    }
+
+    onSuccess?.()
   }
 
   return (
-    <Card>
-      <CardBody as="form" className="gap-3" onSubmit={submit}>
+    <Card as="form" shadow="none" onSubmit={submit}>
+      <CardBody className="gap-3 px-0">
+        <Select
+          disallowEmptySelection
+          classNames={{
+            value: type === TransactionType.DEPOSIT ? '!text-green-500' : '!text-red-500',
+          }}
+          label={t('transactions.type')}
+          selectedKeys={[type]}
+          size="lg"
+          startContent={
+            type === TransactionType.DEPOSIT ? (
+              <IconCircleArrowUpRightFilled className="text-green-500" size={24} />
+            ) : (
+              <IconCircleArrowDownRightFilled className="text-red-500" size={24} />
+            )
+          }
+          onSelectionChange={keys => setType(Array.from(keys)[0] as TransactionType)}
+        >
+          <SelectItem
+            key={TransactionType.DEPOSIT}
+            className="!text-green-500"
+            startContent={<IconCircleArrowUpRightFilled size={18} />}
+          >
+            {t('transactions.deposit')}
+          </SelectItem>
+          <SelectItem
+            key={TransactionType.WITHDRAWAL}
+            className="!text-red-500"
+            startContent={<IconCircleArrowDownRightFilled size={18} />}
+          >
+            {t('transactions.withdrawal')}
+          </SelectItem>
+        </Select>
+
+        <Input
+          ref={amountRef}
+          isRequired
+          classNames={{
+            input: 'outline-none',
+            description: isNaN(Number(amount)) ? 'text-danger' : '',
+          }}
+          color={isNaN(Number(amount)) ? 'danger' : 'default'}
+          description={
+            isNaN(Number(amount))
+              ? t('transactions.invalid_amount')
+              : formatPrice(
+                  type === TransactionType.DEPOSIT ? Number(amount) : -Math.abs(Number(amount))
+                )
+          }
+          label={t('transactions.amount')}
+          size="lg"
+          startContent={<span className="text-default-400">€</span>}
+          type="text"
+          value={amount}
+          onValueChange={handleAmountChange}
+        />
+
         <Input
           isRequired
+          classNames={{ input: 'outline-none' }}
           label={t('transactions.description')}
+          size="lg"
           value={description}
           onValueChange={setDescription}
         />
 
         <Input
-          isRequired
-          label={t('transactions.amount')}
-          type="number"
-          value={amount}
-          onValueChange={setAmount}
+          classNames={{ input: 'outline-none' }}
+          label={t('transactions.date')}
+          size="lg"
+          type="datetime-local"
+          value={dateTime}
+          onValueChange={setDateTime}
         />
-
-        <Input label={t('transactions.date')} type="date" value={date} onValueChange={setDate} />
-
-        <Select
-          label="Tipo"
-          selectedKeys={[type]}
-          onSelectionChange={keys => setType(Array.from(keys)[0] as TransactionType)}
-        >
-          <SelectItem key={TransactionType.DEPOSIT}>{t('transactions.deposit')}</SelectItem>
-          <SelectItem key={TransactionType.WITHDRAWAL}>{t('transactions.withdrawal')}</SelectItem>
-        </Select>
-
+      </CardBody>
+      <CardFooter className="px-0 justify-end">
         <Button
-          aria-label={t('transactions.add')}
+          className="text-md"
           color="primary"
-          startContent={<IconPlus size={18} />}
+          isDisabled={!description || !amount || isNaN(Number(amount)) || Number(amount) === 0}
+          startContent={<IconDeviceFloppy size={20} />}
           type="submit"
         >
-          {t('transactions.add')}
+          {t('transactions.save')}
         </Button>
-      </CardBody>
+      </CardFooter>
     </Card>
   )
 }

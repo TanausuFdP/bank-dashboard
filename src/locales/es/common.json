@@ -1,5 +1,13 @@
 {
-   "transactions": {
+  "common": {
+    "app_title": "KenTech Bank",
+    "you_sure": "¿Estás seguro?",
+    "cancel": "Cancelar",
+    "submit": "Confirmar",
+    "next": "Siguiente",
+    "prev": "Anterior"
+  },
+  "transactions": {
     "empty": "No hay transacciones todavía",
     "delete": "Eliminar",
     "description": "Descripción",
@@ -7,11 +15,33 @@
     "date": "Fecha",
     "deposit": "Ingreso",
     "withdrawal": "Gasto",
-    "add": "Añadir transacción"
+    "add": "Añadir transacción",
+    "type": "Tipo",
+    "edit": "Editar",
+    "edit_transaction": "Editar transacción",
+    "actions": "Acciones",
+    "save": "Guardar",
+    "delete_confirm_with_name": "¿Seguro que quieres eliminar \"{{description}}\"?",
+    "clone": "Duplicar",
+    "search": "Buscar...",
+    "invalid_amount": "Introduce una cantidad válida",
+    "all": "Todas"
   },
   "balance": {
     "title": "Balance",
     "income": "Ingresos",
     "expenses": "Gastos"
+  },
+  "filters_modal": {
+    "title": "Filtros",
+    "date_range": "Rango de fechas",
+    "amount_range": "Rango de cantidades",
+    "from": "Desde",
+    "to": "Hasta",
+    "apply": "Aplicar y cerrar",
+    "today": "Hoy",
+    "this_month": "Este mes",
+    "this_year": "Este año",
+    "clear": "Limpiar filtros"
   }
 }
