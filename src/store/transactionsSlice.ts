@@ -6,9 +6,11 @@ import { loadTransactions, persistTransactions } from '@/services/transactionsSt
 
 type TransactionsFilters = {
   search: string
-  type: 'all' | 'deposit' | 'withdrawal'
+  type: 'ALL' | 'DEPOSIT' | 'WITHDRAWAL'
   fromDate: string | null
   toDate: string | null
+  minAmount: number | null
+  maxAmount: number | null
 }
 
 type TransactionsState = {
@@ -27,9 +29,11 @@ const initialState: TransactionsState = {
   future: null,
   filters: {
     search: '',
-    type: 'all',
+    type: 'ALL',
     fromDate: null,
     toDate: null,
+    minAmount: null,
+    maxAmount: null,
   },
   page: 1,
   pageSize: 5,
@@ -95,6 +99,12 @@ const transactionsSlice = createSlice({
     setPage(state, action) {
       state.page = action.payload
     },
+
+    setAmountRange(state, action) {
+      state.filters.minAmount = action.payload.min
+      state.filters.maxAmount = action.payload.max
+      state.page = 1
+    },
   },
 })
 
@@ -108,6 +118,7 @@ export const {
   setType,
   setDateRange,
   setPage,
+  setAmountRange,
 } = transactionsSlice.actions
 
 export default transactionsSlice.reducer

@@ -1,13 +1,39 @@
 import type { RootState } from '@/store'
+import type { TransactionType } from '@/types/enums'
 import type { Transaction } from '@/types/models'
 
-export const selectFilteredTransactions = (state: RootState): Transaction[] => {
+export const selectFilteredTransactions = (state: RootState) => {
   const { items, filters } = state.transactions
-  const search = filters.search.trim().toLowerCase()
 
-  if (!search) return items
+  let result = items
 
-  return items.filter(t => t.description.toLowerCase().includes(search))
+  if (filters.search) {
+    const q = filters.search.toLowerCase()
+
+    result = result.filter(t => t.description.toLowerCase().includes(q))
+  }
+
+  if (filters.type !== 'ALL') {
+    result = result.filter(t => t.type === (filters.type as TransactionType))
+  }
+
+  if (filters.fromDate) {
+    result = result.filter(t => t.date >= filters.fromDate!)
+  }
+
+  if (filters.toDate) {
+    result = result.filter(t => t.date <= filters.toDate!)
+  }
+
+  if (filters.minAmount !== null) {
+    result = result.filter(t => Math.abs(t.amount) >= filters.minAmount!)
+  }
+
+  if (filters.maxAmount !== null) {
+    result = result.filter(t => Math.abs(t.amount) <= filters.maxAmount!)
+  }
+
+  return result
 }
 
 export const selectSortedTransactions = (state: RootState): Transaction[] => {
@@ -41,3 +67,6 @@ export const selectPaginationInfo = (state: RootState) => {
     totalItems,
   }
 }
+
+export const selectMaxTransactionAmount = (state: RootState) =>
+  Math.max(0, ...state.transactions.items.map(t => Math.abs(t.amount)))

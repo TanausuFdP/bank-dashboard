@@ -24,11 +24,24 @@
     "delete_confirm_with_name": "¿Seguro que quieres eliminar \"{{description}}\"?",
     "clone": "Duplicar",
     "search": "Buscar...",
-    "invalid_amount": "Introduce una cantidad válida"
+    "invalid_amount": "Introduce una cantidad válida",
+    "all": "Todas"
   },
   "balance": {
     "title": "Balance",
     "income": "Ingresos",
     "expenses": "Gastos"
+  },
+  "filters_modal": {
+    "title": "Filtros",
+    "date_range": "Rango de fechas",
+    "amount_range": "Rango de cantidades",
+    "from": "Desde",
+    "to": "Hasta",
+    "apply": "Aplicar y cerrar",
+    "today": "Hoy",
+    "this_month": "Este mes",
+    "this_year": "Este año",
+    "clear": "Limpiar filtros"
   }
 }

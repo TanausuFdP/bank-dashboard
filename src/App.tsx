@@ -2,7 +2,13 @@ import type { Transaction } from '@/types/models'
 import type { AppDispatch, RootState } from './store'
 
 import { useEffect, useState } from 'react'
-import { IconArrowBackUp, IconArrowForwardUp, IconPlus, IconSearch } from '@tabler/icons-react'
+import {
+  IconAdjustmentsHorizontal,
+  IconArrowBackUp,
+  IconArrowForwardUp,
+  IconPlus,
+  IconSearch,
+} from '@tabler/icons-react'
 import { useTranslation } from 'react-i18next'
 import { Button, Divider, Input, Spacer } from '@heroui/react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -11,15 +17,20 @@ import BalanceOverview from './components/BalanceOverview'
 import TransactionsList from './components/TransactionsList'
 import TransactionModal from './components/TransactionModal'
 import { redo, setSearch, undo } from './store/transactionsSlice'
+import { selectMaxTransactionAmount } from './store/transactionsSelector'
+import FiltersModal from './components/FiltersModal'
 
 function App() {
   const { t } = useTranslation()
   const dispatch = useDispatch<AppDispatch>()
   const { past, future } = useSelector((state: RootState) => state.transactions)
   const search = useSelector((state: RootState) => state.transactions.filters.search)
+  const maxAmount = useSelector(selectMaxTransactionAmount)
+
   const [transactionModalOpen, setTransactionModalOpen] = useState(false)
   const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null)
   const [isClone, setIsClone] = useState(false)
+  const [filtersOpen, setFiltersOpen] = useState(false)
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -86,6 +97,12 @@ function App() {
               <IconArrowForwardUp size={24} />
             </button>
           </div>
+          <button
+            className="hidden md:flex items-center bg-white dark:bg-foreground-50 rounded-full p-2 cursor-pointer"
+            onClick={() => setFiltersOpen(true)}
+          >
+            <IconAdjustmentsHorizontal className="opacity-80" size={22} />
+          </button>
           <Input
             className="hidden md:block w-48"
             classNames={{
@@ -113,7 +130,7 @@ function App() {
 
       <Spacer className="md:hidden" y={20} />
 
-      <div className="w-full px-5">
+      <div className="w-full px-5 flex items-center gap-4">
         <Input
           className="md:hidden"
           classNames={{
@@ -126,6 +143,12 @@ function App() {
           value={search}
           onChange={e => dispatch(setSearch(e.target.value))}
         />
+        <button
+          className="flex md:hidden items-center bg-white dark:bg-foreground-50 rounded-full p-2 cursor-pointer"
+          onClick={() => setFiltersOpen(true)}
+        >
+          <IconAdjustmentsHorizontal className="opacity-80" size={22} />
+        </button>
       </div>
 
       <Spacer className="hidden md:block" y={14} />
@@ -155,6 +178,12 @@ function App() {
           {t('transactions.add')}
         </Button>
       </div>
+
+      <FiltersModal
+        isOpen={filtersOpen}
+        maxAmount={maxAmount}
+        onClose={() => setFiltersOpen(false)}
+      />
     </main>
   )
 }
