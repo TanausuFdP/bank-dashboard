@@ -79,17 +79,20 @@ export default function CreateTransactionForm({
 
     if (transaction && !isClone) {
       dispatch(updateTransaction(payload))
+      addToast({
+        color: 'success',
+        title: t('transactions.update_success'),
+      })
     } else {
       dispatch(addTransaction(payload))
       const state = store.getState()
+      const notShowing = hasActiveFilters && !doesTransactionMatchFilters(payload, state)
 
-      if (hasActiveFilters && !doesTransactionMatchFilters(payload, state)) {
-        addToast({
-          color: 'success',
-          title: t('transactions.add_success'),
-          description: t('transactions.hidden_by_filters'),
-        })
-      }
+      addToast({
+        color: notShowing ? 'warning' : 'success',
+        title: t('transactions.add_success'),
+        description: notShowing ? t('transactions.hidden_by_filters') : undefined,
+      })
     }
 
     onSuccess?.()

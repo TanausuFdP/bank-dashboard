@@ -41,7 +41,9 @@
     "invalid_amount_desc": "El importe debe ser un número válido mayor que cero",
     "invalid_amount": "Importe inválido",
     "invalid_date": "La fecha no es correcta",
-    "insufficient_balance": "Saldo insuficiente. Tu balance actual es {{balance}}"
+    "insufficient_balance": "Saldo insuficiente. Tu balance actual es {{balance}}",
+    "update_success": "Transacción actualizada",
+    "delete_success": "Transacción eliminada"
   },
   "balance": {
     "title": "Balance",

@@ -4,6 +4,7 @@ import type { Transaction } from '@/types/models'
 import { useDispatch, useSelector } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 import {
+  addToast,
   Button,
   Card,
   CardBody,
@@ -212,6 +213,10 @@ export default function TransactionsList({ onEdit, onClone }: Props) {
           if (!deleteTarget) return
           dispatch(deleteTransaction(deleteTarget.id))
           setDeleteTarget(null)
+          addToast({
+            color: 'success',
+            title: t('transactions.delete_success'),
+          })
         }}
       />
     </>
