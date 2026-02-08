@@ -6,11 +6,23 @@ import {
   IconAdjustmentsHorizontal,
   IconArrowBackUp,
   IconArrowForwardUp,
+  IconDots,
+  IconDownload,
   IconPlus,
   IconSearch,
+  IconUpload,
 } from '@tabler/icons-react'
 import { useTranslation } from 'react-i18next'
-import { Button, Divider, Input, Spacer } from '@heroui/react'
+import {
+  Button,
+  Divider,
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownTrigger,
+  Input,
+  Spacer,
+} from '@heroui/react'
 import { useDispatch, useSelector } from 'react-redux'
 
 import BalanceOverview from './components/BalanceOverview'
@@ -19,6 +31,7 @@ import TransactionModal from './components/TransactionModal'
 import { redo, setSearch, undo } from './store/transactionsSlice'
 import { selectMaxTransactionAmount } from './store/transactionsSelector'
 import FiltersModal from './components/FiltersModal'
+import { exportTransactionsToCsv } from './services/transactionsCsvExport'
 
 function App() {
   const { t } = useTranslation()
@@ -26,6 +39,7 @@ function App() {
   const { past, future } = useSelector((state: RootState) => state.transactions)
   const search = useSelector((state: RootState) => state.transactions.filters.search)
   const maxAmount = useSelector(selectMaxTransactionAmount)
+  const allTransactions = useSelector((state: RootState) => state.transactions.items)
 
   const [transactionModalOpen, setTransactionModalOpen] = useState(false)
   const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null)
@@ -97,6 +111,28 @@ function App() {
               <IconArrowForwardUp size={24} />
             </button>
           </div>
+          <Dropdown>
+            <DropdownTrigger>
+              <div className="items-center bg-white dark:bg-foreground-50 rounded-full p-2 cursor-pointer">
+                <IconDots className="opacity-80" size={22} />
+              </div>
+            </DropdownTrigger>
+            <DropdownMenu
+              aria-label={t('common.actions')}
+              onAction={key => {
+                if (key === 'export') {
+                  exportTransactionsToCsv(allTransactions)
+                }
+              }}
+            >
+              <DropdownItem key="export" startContent={<IconDownload size={18} />}>
+                {t('common.export')}
+              </DropdownItem>
+              <DropdownItem key="import" startContent={<IconUpload size={18} />}>
+                {t('common.import')}
+              </DropdownItem>
+            </DropdownMenu>
+          </Dropdown>
           <button
             className="hidden md:flex items-center bg-white dark:bg-foreground-50 rounded-full p-2 cursor-pointer"
             onClick={() => setFiltersOpen(true)}

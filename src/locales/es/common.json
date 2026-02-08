@@ -5,7 +5,10 @@
     "cancel": "Cancelar",
     "submit": "Confirmar",
     "next": "Siguiente",
-    "prev": "Anterior"
+    "prev": "Anterior",
+    "actions": "Acciones",
+    "export": "Descargar CSV",
+    "import": "Importar CSV"
   },
   "transactions": {
     "empty": "No hay transacciones todavía",
