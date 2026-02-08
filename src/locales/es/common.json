@@ -27,7 +27,6 @@
     "delete_confirm_with_name": "¿Seguro que quieres eliminar \"{{description}}\"?",
     "clone": "Duplicar",
     "search": "Buscar...",
-    "invalid_amount": "Introduce una cantidad válida",
     "all": "Todas",
     "import_success": "Transacciones importadas correctamente",
     "import_error": "Archivo CSV inválido",
@@ -35,7 +34,13 @@
     "importing": "Importando transacciones...",
     "imported_description": "{{imported}} importadas, {{skipped}} omitidas (duplicados)",
     "add_success": "Transacción añadida",
-    "hidden_by_filters": "Permanece oculta por los filtros"
+    "hidden_by_filters": "Permanece oculta por los filtros",
+    "cannot_save_yet": "Aún no puedes guardar",
+    "missing_description": "La descripción es obligatoria",
+    "missing_amount": "El importe es obligatorio",
+    "invalid_amount_desc": "El importe debe ser un número válido mayor que cero",
+    "invalid_amount": "Importe inválido",
+    "invalid_date": "La fecha no es correcta"
   },
   "balance": {
     "title": "Balance",
