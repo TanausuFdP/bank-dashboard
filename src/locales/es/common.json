@@ -38,7 +38,8 @@
   "balance": {
     "title": "Balance",
     "income": "Ingresos",
-    "expenses": "Gastos"
+    "expenses": "Gastos",
+    "transactions": "{{n}} transacciones"
   },
   "filters_modal": {
     "title": "Filtros",

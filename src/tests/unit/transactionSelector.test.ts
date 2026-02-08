@@ -1,4 +1,7 @@
+import type { RootState } from '@/store'
+
 import {
+  selectBalanceSummary,
   selectFilteredTransactions,
   selectPaginatedTransactions,
 } from '@/store/transactionsSelector'
@@ -46,4 +49,22 @@ test('paginates transactions', () => {
   const result = selectPaginatedTransactions(state as any)
 
   expect(result).toHaveLength(1)
+})
+
+test('calculates balance summary correctly', () => {
+  const state = {
+    transactions: {
+      items: [
+        { amount: 100, type: TransactionType.DEPOSIT },
+        { amount: 50, type: TransactionType.WITHDRAWAL },
+      ],
+    },
+  } as RootState
+
+  const result = selectBalanceSummary(state)
+
+  expect(result.balance).toBe(50)
+  expect(result.income).toBe(100)
+  expect(result.expenses).toBe(50)
+  expect(result.totalTransactions).toBe(2)
 })
