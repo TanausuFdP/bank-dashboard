@@ -8,7 +8,10 @@
     "prev": "Anterior",
     "actions": "Acciones",
     "export": "Descargar CSV",
-    "import": "Importar CSV"
+    "import": "Importar CSV",
+    "undo": "Deshacer",
+    "redo": "Rehacer",
+    "open_filters": "Abrir filtros"
   },
   "transactions": {
     "empty": "No hay transacciones todavía",

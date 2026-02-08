@@ -148,6 +148,7 @@ function App() {
         <div className="flex items-center gap-2 lg:gap-4">
           <div className="flex items-center bg-white dark:bg-foreground-50 rounded-full px-3 py-2">
             <button
+              aria-label={t('common.undo')}
               className={`text-sm md:text-base ${!past ? 'cursor-not-allowed opacity-30' : 'opacity-85'}`}
               disabled={!past}
               onClick={() => dispatch(undo())}
@@ -156,6 +157,7 @@ function App() {
             </button>
             <Divider className="mx-2 h-5 opacity-50" orientation="vertical" />
             <button
+              aria-label={t('common.redo')}
               className={`text-sm md:text-base ${!future ? 'cursor-not-allowed opacity-30' : 'opacity-85'}`}
               disabled={!future}
               onClick={() => dispatch(redo())}
@@ -196,6 +198,7 @@ function App() {
             placement="bottom-right"
           >
             <button
+              aria-label={t('common.open_filters')}
               className={`hidden lg:flex items-center rounded-full p-2 cursor-pointer relative
     ${hasActiveFilters ? 'border border-green-500' : ''}
     bg-white dark:bg-foreground-50`}
@@ -255,6 +258,7 @@ function App() {
             placement="bottom-right"
           >
             <button
+              aria-label={t('common.open_filters')}
               className={`flex lg:hidden items-center rounded-full p-2 cursor-pointer relative
     ${hasActiveFilters ? 'border border-green-500' : ''}
     bg-white dark:bg-foreground-50`}

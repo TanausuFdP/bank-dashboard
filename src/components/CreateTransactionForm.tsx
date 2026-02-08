@@ -232,7 +232,12 @@ export default function CreateTransactionForm({
       w-[90%] md:w-80
     "
         >
-          <Card className="rounded-2xl border border-warning-400" shadow="lg">
+          <Card
+            aria-live="assertive"
+            className="rounded-2xl border border-warning-400"
+            role="alert"
+            shadow="lg"
+          >
             <CardBody className="gap-2">
               <p className="text-sm font-semibold text-warning-600">
                 {t('transactions.cannot_save_yet')}
