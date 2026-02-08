@@ -24,6 +24,7 @@ import {
   DropdownMenu,
   DropdownTrigger,
   Input,
+  ScrollShadow,
   Spacer,
   Spinner,
 } from '@heroui/react'
@@ -142,9 +143,9 @@ function App() {
       )}
       <div className="fixed top-3 md:top-5 left-5 md:left-10 w-[calc(100%-2.5rem)] md:w-[calc(100%-5rem)] flex items-center justify-between z-20">
         <div className="bg-white dark:bg-foreground-50 rounded-full px-4 py-2">
-          <h1 className="text-lg md:text-xl font-semibold">{t('common.app_title')}</h1>
+          <h1 className="text-lg lg:text-xl font-semibold">{t('common.app_title')}</h1>
         </div>
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2 lg:gap-4">
           <div className="flex items-center bg-white dark:bg-foreground-50 rounded-full px-3 py-2">
             <button
               className={`text-sm md:text-base ${!past ? 'cursor-not-allowed opacity-30' : 'opacity-85'}`}
@@ -188,14 +189,14 @@ function App() {
           </Dropdown>
           <Badge
             className="py-1"
-            classNames={{ base: 'hidden md:flex' }}
+            classNames={{ base: 'hidden lg:flex' }}
             color="success"
             content={<IconCheck className="text-white stroke-[4]" size={12} />}
             isInvisible={!hasActiveFilters}
             placement="bottom-right"
           >
             <button
-              className={`hidden md:flex items-center rounded-full p-2 cursor-pointer relative
+              className={`hidden lg:flex items-center rounded-full p-2 cursor-pointer relative
     ${hasActiveFilters ? 'border border-green-500' : ''}
     bg-white dark:bg-foreground-50`}
               onClick={() => setFiltersOpen(true)}
@@ -204,7 +205,7 @@ function App() {
             </button>
           </Badge>
           <Input
-            className="hidden md:block w-48"
+            className="hidden lg:block w-48"
             classNames={{
               inputWrapper: '!bg-white dark:!bg-foreground-50',
               input: 'outline-none text-md',
@@ -228,54 +229,55 @@ function App() {
         </div>
       </div>
 
-      <Spacer className="md:hidden" y={20} />
+      <Spacer className="lg:hidden" y={20} />
+      <Spacer className="hidden lg:block" y={16} />
 
-      <div className="w-full px-5 flex items-center gap-4">
-        <Input
-          className="md:hidden"
-          classNames={{
-            inputWrapper: '!bg-white dark:!bg-foreground-50',
-            input: 'outline-none text-md',
-          }}
-          placeholder={t('transactions.search')}
-          radius="full"
-          startContent={<IconSearch className="opacity-60" size={20} />}
-          value={search}
-          onChange={e => dispatch(setSearch(e.target.value))}
-        />
-        <Badge
-          className="py-1"
-          classNames={{ base: 'md:hidden' }}
-          color="success"
-          content={<IconCheck className="text-white stroke-[4]" size={12} />}
-          isInvisible={!hasActiveFilters}
-          placement="bottom-right"
-        >
-          <button
-            className={`flex md:hidden items-center rounded-full p-2 cursor-pointer relative
+      <ScrollShadow className="max-h-[calc(100dvh-6rem)] pb-10">
+        <div className="w-full px-5 flex items-center gap-4 max-w-xl mx-auto">
+          <Input
+            className="lg:hidden"
+            classNames={{
+              inputWrapper: '!bg-white dark:!bg-foreground-50',
+              input: 'outline-none text-md',
+            }}
+            placeholder={t('transactions.search')}
+            radius="full"
+            startContent={<IconSearch className="opacity-60" size={20} />}
+            value={search}
+            onChange={e => dispatch(setSearch(e.target.value))}
+          />
+          <Badge
+            className="py-1"
+            classNames={{ base: 'lg:hidden' }}
+            color="success"
+            content={<IconCheck className="text-white stroke-[4]" size={12} />}
+            isInvisible={!hasActiveFilters}
+            placement="bottom-right"
+          >
+            <button
+              className={`flex lg:hidden items-center rounded-full p-2 cursor-pointer relative
     ${hasActiveFilters ? 'border border-green-500' : ''}
     bg-white dark:bg-foreground-50`}
-            onClick={() => setFiltersOpen(true)}
-          >
-            <IconAdjustmentsHorizontal className="opacity-80" size={22} />
-          </button>
-        </Badge>
-      </div>
+              onClick={() => setFiltersOpen(true)}
+            >
+              <IconAdjustmentsHorizontal className="opacity-80" size={22} />
+            </button>
+          </Badge>
+        </div>
 
-      <Spacer className="hidden md:block" y={14} />
+        <div className="mx-auto max-w-xl space-y-6 p-5">
+          <BalanceOverview />
 
-      <div className="mx-auto max-w-xl space-y-6 p-5">
-        <BalanceOverview />
+          <TransactionsList onClone={openClone} onEdit={openEdit} />
 
-        <TransactionsList onClone={openClone} onEdit={openEdit} />
-
-        <TransactionModal
-          isClone={isClone}
-          isOpen={transactionModalOpen}
-          transaction={selectedTransaction}
-          onClose={() => setTransactionModalOpen(false)}
-        />
-      </div>
+          <TransactionModal
+            isClone={isClone}
+            isOpen={transactionModalOpen}
+            transaction={selectedTransaction}
+            onClose={() => setTransactionModalOpen(false)}
+          />
+        </div>
+      </ScrollShadow>
 
       <div className="fixed bottom-5 left-5 w-[calc(100%-2.5rem)] z-10">
         <Button
