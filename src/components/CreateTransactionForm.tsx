@@ -24,7 +24,11 @@ import { store, type AppDispatch } from '@/store'
 import { addTransaction, updateTransaction } from '@/store/transactionsSlice'
 import { TransactionType } from '@/types/enums'
 import { formatPrice } from '@/utils/helper'
-import { doesTransactionMatchFilters, selectHasActiveFilters } from '@/store/transactionsSelector'
+import {
+  doesTransactionMatchFilters,
+  selectBalanceSummary,
+  selectHasActiveFilters,
+} from '@/store/transactionsSelector'
 
 type Props = {
   transaction?: Transaction | null
@@ -42,6 +46,7 @@ export default function CreateTransactionForm({
   const { t } = useTranslation()
   const dispatch = useDispatch<AppDispatch>()
   const hasActiveFilters = useSelector(selectHasActiveFilters)
+  const { balance } = useSelector(selectBalanceSummary)
 
   const [description, setDescription] = useState(transaction?.description ?? '')
   const [amount, setAmount] = useState(transaction ? Math.abs(transaction.amount).toString() : '')
@@ -106,6 +111,20 @@ export default function CreateTransactionForm({
 
   if (isInvalidDate) {
     missingRequirements.push(t('transactions.invalid_date'))
+  }
+
+  const numericAmount = Number(amount)
+
+  const isWithdrawal = type === TransactionType.WITHDRAWAL
+  const exceedsBalance =
+    isWithdrawal && !isNaN(numericAmount) && numericAmount > 0 && numericAmount > balance
+
+  if (exceedsBalance) {
+    missingRequirements.push(
+      t('transactions.insufficient_balance', {
+        balance: formatPrice(balance),
+      })
+    )
   }
 
   const isDisabled = missingRequirements.length > 0
