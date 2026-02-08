@@ -1,20 +1,30 @@
-import type { AppDispatch } from '@/store'
 import type { Transaction } from '@/types/models'
 
 import { useState } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 import { v4 as uuid } from 'uuid'
-import { Button, Card, CardBody, CardFooter, Input, Select, SelectItem } from '@heroui/react'
+import {
+  addToast,
+  Button,
+  Card,
+  CardBody,
+  CardFooter,
+  Input,
+  Select,
+  SelectItem,
+} from '@heroui/react'
 import {
   IconCircleArrowDownRightFilled,
   IconCircleArrowUpRightFilled,
   IconDeviceFloppy,
 } from '@tabler/icons-react'
 
+import { store, type AppDispatch } from '@/store'
 import { addTransaction, updateTransaction } from '@/store/transactionsSlice'
 import { TransactionType } from '@/types/enums'
 import { formatPrice } from '@/utils/helper'
+import { doesTransactionMatchFilters, selectHasActiveFilters } from '@/store/transactionsSelector'
 
 type Props = {
   transaction?: Transaction | null
@@ -30,8 +40,8 @@ export default function CreateTransactionForm({
   isClone,
 }: Props) {
   const { t } = useTranslation()
-
   const dispatch = useDispatch<AppDispatch>()
+  const hasActiveFilters = useSelector(selectHasActiveFilters)
 
   const [description, setDescription] = useState(transaction?.description ?? '')
   const [amount, setAmount] = useState(transaction ? Math.abs(transaction.amount).toString() : '')
@@ -66,6 +76,15 @@ export default function CreateTransactionForm({
       dispatch(updateTransaction(payload))
     } else {
       dispatch(addTransaction(payload))
+      const state = store.getState()
+
+      if (hasActiveFilters && !doesTransactionMatchFilters(payload, state)) {
+        addToast({
+          color: 'success',
+          title: t('transactions.add_success'),
+          description: t('transactions.hidden_by_filters'),
+        })
+      }
     }
 
     onSuccess?.()

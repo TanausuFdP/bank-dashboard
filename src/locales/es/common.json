@@ -33,7 +33,9 @@
     "import_error": "Archivo CSV inválido",
     "import_no_new": "No hay nuevas transacciones para importar",
     "importing": "Importando transacciones...",
-    "imported_description": "{{imported}} importadas, {{skipped}} omitidas (duplicados)"
+    "imported_description": "{{imported}} importadas, {{skipped}} omitidas (duplicados)",
+    "add_success": "Transacción añadida",
+    "hidden_by_filters": "Permanece oculta por los filtros"
   },
   "balance": {
     "title": "Balance",

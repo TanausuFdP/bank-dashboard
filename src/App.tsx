@@ -6,6 +6,7 @@ import {
   IconAdjustmentsHorizontal,
   IconArrowBackUp,
   IconArrowForwardUp,
+  IconCheck,
   IconDots,
   IconDownload,
   IconPlus,
@@ -15,6 +16,7 @@ import {
 import { useTranslation } from 'react-i18next'
 import {
   addToast,
+  Badge,
   Button,
   Divider,
   Dropdown,
@@ -31,7 +33,7 @@ import BalanceOverview from './components/BalanceOverview'
 import TransactionsList from './components/TransactionsList'
 import TransactionModal from './components/TransactionModal'
 import { importManyTransactions, redo, setSearch, undo } from './store/transactionsSlice'
-import { selectMaxTransactionAmount } from './store/transactionsSelector'
+import { selectHasActiveFilters, selectMaxTransactionAmount } from './store/transactionsSelector'
 import FiltersModal from './components/FiltersModal'
 import { exportTransactionsToCsv } from './services/transactionsCsvExport'
 import { importTransactionsFromCsv } from './services/transactionCsvImport'
@@ -44,6 +46,7 @@ function App() {
   const maxAmount = useSelector(selectMaxTransactionAmount)
   const allTransactions = useSelector((state: RootState) => state.transactions.items)
   const fileInputRef = useRef<HTMLInputElement | null>(null)
+  const hasActiveFilters = useSelector(selectHasActiveFilters)
 
   const [transactionModalOpen, setTransactionModalOpen] = useState(false)
   const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null)
@@ -183,12 +186,23 @@ function App() {
               </DropdownItem>
             </DropdownMenu>
           </Dropdown>
-          <button
-            className="hidden md:flex items-center bg-white dark:bg-foreground-50 rounded-full p-2 cursor-pointer"
-            onClick={() => setFiltersOpen(true)}
+          <Badge
+            className="py-1"
+            classNames={{ base: 'hidden md:flex' }}
+            color="success"
+            content={<IconCheck className="text-white stroke-[4]" size={12} />}
+            isInvisible={!hasActiveFilters}
+            placement="bottom-right"
           >
-            <IconAdjustmentsHorizontal className="opacity-80" size={22} />
-          </button>
+            <button
+              className={`hidden md:flex items-center rounded-full p-2 cursor-pointer relative
+    ${hasActiveFilters ? 'border border-green-500' : ''}
+    bg-white dark:bg-foreground-50`}
+              onClick={() => setFiltersOpen(true)}
+            >
+              <IconAdjustmentsHorizontal className="opacity-80" size={22} />
+            </button>
+          </Badge>
           <Input
             className="hidden md:block w-48"
             classNames={{
@@ -229,12 +243,23 @@ function App() {
           value={search}
           onChange={e => dispatch(setSearch(e.target.value))}
         />
-        <button
-          className="flex md:hidden items-center bg-white dark:bg-foreground-50 rounded-full p-2 cursor-pointer"
-          onClick={() => setFiltersOpen(true)}
+        <Badge
+          className="py-1"
+          classNames={{ base: 'md:hidden' }}
+          color="success"
+          content={<IconCheck className="text-white stroke-[4]" size={12} />}
+          isInvisible={!hasActiveFilters}
+          placement="bottom-right"
         >
-          <IconAdjustmentsHorizontal className="opacity-80" size={22} />
-        </button>
+          <button
+            className={`flex md:hidden items-center rounded-full p-2 cursor-pointer relative
+    ${hasActiveFilters ? 'border border-green-500' : ''}
+    bg-white dark:bg-foreground-50`}
+            onClick={() => setFiltersOpen(true)}
+          >
+            <IconAdjustmentsHorizontal className="opacity-80" size={22} />
+          </button>
+        </Badge>
       </div>
 
       <Spacer className="hidden md:block" y={14} />

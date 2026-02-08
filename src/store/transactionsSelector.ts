@@ -96,3 +96,48 @@ export const selectBalanceSummary = (state: RootState) => {
     totalTransactions: items.length,
   }
 }
+
+export const selectHasActiveFilters = (state: RootState) => {
+  const { filters } = state.transactions
+
+  return (
+    filters.type !== 'ALL' ||
+    filters.fromDate !== null ||
+    filters.toDate !== null ||
+    filters.minAmount !== null ||
+    filters.maxAmount !== null
+  )
+}
+
+export const doesTransactionMatchFilters = (transaction: Transaction, state: RootState) => {
+  const { filters } = state.transactions
+
+  if (
+    filters.search &&
+    !transaction.description.toLowerCase().includes(filters.search.toLowerCase())
+  ) {
+    return false
+  }
+
+  if (filters.type !== 'ALL' && transaction.type !== filters.type) {
+    return false
+  }
+
+  if (filters.fromDate && transaction.date < filters.fromDate) {
+    return false
+  }
+
+  if (filters.toDate && transaction.date > filters.toDate) {
+    return false
+  }
+
+  if (filters.minAmount !== null && transaction.amount < filters.minAmount) {
+    return false
+  }
+
+  if (filters.maxAmount !== null && transaction.amount > filters.maxAmount) {
+    return false
+  }
+
+  return true
+}

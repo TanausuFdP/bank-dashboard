@@ -3,6 +3,7 @@ import type { RootState } from '@/store'
 import {
   selectBalanceSummary,
   selectFilteredTransactions,
+  selectHasActiveFilters,
   selectPaginatedTransactions,
 } from '@/store/transactionsSelector'
 import { TransactionType } from '@/types/enums'
@@ -36,7 +37,20 @@ const state = {
     page: 1,
     pageSize: 5,
   },
-}
+} as RootState
+
+const filtersBaseState = {
+  transactions: {
+    filters: {
+      search: '',
+      type: 'ALL',
+      fromDate: null,
+      toDate: null,
+      minAmount: null,
+      maxAmount: null,
+    },
+  },
+} as RootState
 
 test('filters transactions by search text', () => {
   const result = selectFilteredTransactions(state as any)
@@ -67,4 +81,53 @@ test('calculates balance summary correctly', () => {
   expect(result.income).toBe(100)
   expect(result.expenses).toBe(50)
   expect(result.totalTransactions).toBe(2)
+})
+
+test('returns false when no filters are active', () => {
+  expect(selectHasActiveFilters(filtersBaseState)).toBe(false)
+})
+
+test('returns true when type filter is active', () => {
+  const state = {
+    ...filtersBaseState,
+    transactions: {
+      ...filtersBaseState.transactions,
+      filters: {
+        ...filtersBaseState.transactions.filters,
+        type: 'DEPOSIT',
+      },
+    },
+  } as RootState
+
+  expect(selectHasActiveFilters(state)).toBe(true)
+})
+
+test('returns true when date filter is active', () => {
+  const state = {
+    ...filtersBaseState,
+    transactions: {
+      ...filtersBaseState.transactions,
+      filters: {
+        ...filtersBaseState.transactions.filters,
+        fromDate: '2024-01-01',
+      },
+    },
+  } as RootState
+
+  expect(selectHasActiveFilters(state)).toBe(true)
+})
+
+test('returns true when amount filter is active', () => {
+  const state = {
+    ...filtersBaseState,
+    transactions: {
+      ...filtersBaseState.transactions,
+      filters: {
+        ...filtersBaseState.transactions.filters,
+        minAmount: 10,
+      },
+    },
+  } as RootState
+
+  expect(selectHasActiveFilters(state)).toBe(true)
 })
