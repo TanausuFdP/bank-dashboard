@@ -10,14 +10,22 @@ import {
 } from '@tabler/icons-react'
 
 import { formatPrice } from '@/utils/helper'
+import { TransactionType } from '@/types/enums'
 
 export default function BalanceOverview() {
   const { t } = useTranslation()
   const transactions = useSelector((state: RootState) => state.transactions.items)
 
-  const balance = transactions.reduce((acc, t) => acc + t.amount, 0)
-  const income = transactions.filter(t => t.amount > 0).reduce((acc, t) => acc + t.amount, 0)
-  const expenses = transactions.filter(t => t.amount < 0).reduce((acc, t) => acc + t.amount, 0)
+  const balance = transactions.reduce(
+    (acc, t) => acc + (t.type === TransactionType.DEPOSIT ? t.amount : -t.amount),
+    0
+  )
+  const income = transactions
+    .filter(t => t.type === TransactionType.DEPOSIT)
+    .reduce((acc, t) => acc + t.amount, 0)
+  const expenses = transactions
+    .filter(t => t.type === TransactionType.WITHDRAWAL)
+    .reduce((acc, t) => acc - t.amount, 0)
 
   return (
     <Card className="rounded-3xl" shadow="none">

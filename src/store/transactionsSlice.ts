@@ -105,6 +105,13 @@ const transactionsSlice = createSlice({
       state.filters.maxAmount = action.payload.max
       state.page = 1
     },
+
+    importManyTransactions(state, action) {
+      state.past = state.items
+      state.future = null
+      state.items = [...state.items, ...action.payload]
+      persistTransactions(state.items)
+    },
   },
 })
 
@@ -119,6 +126,7 @@ export const {
   setDateRange,
   setPage,
   setAmountRange,
+  importManyTransactions,
 } = transactionsSlice.actions
 
 export default transactionsSlice.reducer

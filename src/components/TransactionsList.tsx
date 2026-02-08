@@ -65,7 +65,10 @@ export default function TransactionsList({ onEdit, onClone }: Props) {
         {grouped.map(group => {
           const dateKey = group[0].date.split('T')[0]
 
-          const balance = group.reduce((acc, tn) => acc + tn.amount, 0)
+          const balance = group.reduce(
+            (acc, tn) => acc + (tn.type === TransactionType.DEPOSIT ? tn.amount : -tn.amount),
+            0
+          )
 
           return (
             <div key={dateKey} className="space-y-2">
@@ -111,7 +114,9 @@ export default function TransactionsList({ onEdit, onClone }: Props) {
                                   : 'text-red-600'
                               }
                             >
-                              {formatPrice(tn.amount)}
+                              {formatPrice(
+                                tn.type === TransactionType.DEPOSIT ? tn.amount : -tn.amount
+                              )}
                             </span>
 
                             <Dropdown>
