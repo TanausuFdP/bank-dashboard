@@ -1,7 +1,7 @@
 import type { Transaction } from '@/types/models'
 import type { AppDispatch, RootState } from './store'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import {
   IconAdjustmentsHorizontal,
   IconArrowBackUp,
@@ -14,6 +14,7 @@ import {
 } from '@tabler/icons-react'
 import { useTranslation } from 'react-i18next'
 import {
+  addToast,
   Button,
   Divider,
   Dropdown,
@@ -22,16 +23,18 @@ import {
   DropdownTrigger,
   Input,
   Spacer,
+  Spinner,
 } from '@heroui/react'
 import { useDispatch, useSelector } from 'react-redux'
 
 import BalanceOverview from './components/BalanceOverview'
 import TransactionsList from './components/TransactionsList'
 import TransactionModal from './components/TransactionModal'
-import { redo, setSearch, undo } from './store/transactionsSlice'
+import { importManyTransactions, redo, setSearch, undo } from './store/transactionsSlice'
 import { selectMaxTransactionAmount } from './store/transactionsSelector'
 import FiltersModal from './components/FiltersModal'
 import { exportTransactionsToCsv } from './services/transactionsCsvExport'
+import { importTransactionsFromCsv } from './services/transactionCsvImport'
 
 function App() {
   const { t } = useTranslation()
@@ -40,11 +43,13 @@ function App() {
   const search = useSelector((state: RootState) => state.transactions.filters.search)
   const maxAmount = useSelector(selectMaxTransactionAmount)
   const allTransactions = useSelector((state: RootState) => state.transactions.items)
+  const fileInputRef = useRef<HTMLInputElement | null>(null)
 
   const [transactionModalOpen, setTransactionModalOpen] = useState(false)
   const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null)
   const [isClone, setIsClone] = useState(false)
   const [filtersOpen, setFiltersOpen] = useState(false)
+  const [isImporting, setIsImporting] = useState(false)
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -87,8 +92,51 @@ function App() {
     setTransactionModalOpen(true)
   }
 
+  const handleCsvImport = async (file: File) => {
+    try {
+      setIsImporting(true)
+      const text = await file.text()
+      const result = importTransactionsFromCsv(text, allTransactions)
+
+      if (result.transactions.length === 0) {
+        addToast({
+          color: 'warning',
+          title: t('transactions.import_no_new'),
+        })
+
+        return
+      }
+
+      dispatch(importManyTransactions(result.transactions))
+
+      addToast({
+        color: 'success',
+        title: t('transactions.import_success'),
+        description: t('transactions.imported_description', {
+          imported: result.transactions.length,
+          skipped: result.skipped,
+        }),
+      })
+    } catch {
+      addToast({
+        color: 'danger',
+        title: t('transactions.import_error'),
+      })
+    } finally {
+      setIsImporting(false)
+    }
+  }
+
   return (
     <main>
+      {isImporting && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-30">
+          <div className="bg-white dark:bg-foreground-50 rounded-3xl p-6 flex flex-col items-center">
+            <Spinner className="mx-auto mb-4" size="lg" variant="simple" />
+            <p className="animate-pulse">{t('transactions.importing')}</p>
+          </div>
+        </div>
+      )}
       <div className="fixed top-3 md:top-5 left-5 md:left-10 w-[calc(100%-2.5rem)] md:w-[calc(100%-5rem)] flex items-center justify-between z-20">
         <div className="bg-white dark:bg-foreground-50 rounded-full px-4 py-2">
           <h1 className="text-lg md:text-xl font-semibold">{t('common.app_title')}</h1>
@@ -122,6 +170,8 @@ function App() {
               onAction={key => {
                 if (key === 'export') {
                   exportTransactionsToCsv(allTransactions)
+                } else if (key === 'import') {
+                  fileInputRef.current?.click()
                 }
               }}
             >
@@ -214,6 +264,21 @@ function App() {
           {t('transactions.add')}
         </Button>
       </div>
+
+      <input
+        ref={fileInputRef}
+        hidden
+        accept=".csv"
+        type="file"
+        onChange={e => {
+          const file = e.target.files?.[0]
+
+          if (file) {
+            handleCsvImport(file)
+            e.target.value = ''
+          }
+        }}
+      />
 
       <FiltersModal
         isOpen={filtersOpen}

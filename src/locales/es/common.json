@@ -28,7 +28,12 @@
     "clone": "Duplicar",
     "search": "Buscar...",
     "invalid_amount": "Introduce una cantidad válida",
-    "all": "Todas"
+    "all": "Todas",
+    "import_success": "Transacciones importadas correctamente",
+    "import_error": "Archivo CSV inválido",
+    "import_no_new": "No hay nuevas transacciones para importar",
+    "importing": "Importando transacciones...",
+    "imported_description": "{{imported}} importadas, {{skipped}} omitidas (duplicados)"
   },
   "balance": {
     "title": "Balance",
