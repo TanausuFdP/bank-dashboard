@@ -60,6 +60,13 @@ export default function FiltersModal({ isOpen, onClose, maxAmount }: Props) {
     setTypeState('ALL')
     setDateRangeState(null)
     setAmountRangeState([0, maxAmount])
+
+    dispatch(
+      setAmountRange({
+        min: null,
+        max: null,
+      })
+    )
   }
 
   function applyFilters() {
@@ -72,10 +79,12 @@ export default function FiltersModal({ isOpen, onClose, maxAmount }: Props) {
       })
     )
 
+    const isDefaultRange = amountRangeState[0] === 0 && amountRangeState[1] === maxAmount
+
     dispatch(
       setAmountRange({
-        min: amountRangeState[0],
-        max: amountRangeState[1],
+        min: isDefaultRange ? null : amountRangeState[0],
+        max: isDefaultRange ? null : amountRangeState[1],
       })
     )
 

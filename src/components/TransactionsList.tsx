@@ -4,6 +4,7 @@ import type { Transaction } from '@/types/models'
 import { useDispatch, useSelector } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 import {
+  addToast,
   Button,
   Card,
   CardBody,
@@ -61,6 +62,37 @@ export default function TransactionsList({ onEdit, onClone }: Props) {
 
   return (
     <>
+      <div className="flex justify-between items-center">
+        <Button
+          className="text-sm"
+          color="primary"
+          isDisabled={!hasPrev}
+          radius="full"
+          size="sm"
+          startContent={<IconChevronLeft size={18} />}
+          variant="flat"
+          onPress={() => dispatch(setPage(page - 1))}
+        >
+          {t('common.prev')}
+        </Button>
+
+        <span className="text-sm text-gray-500">
+          {page} / {totalPages}
+        </span>
+
+        <Button
+          className="text-sm"
+          color="primary"
+          endContent={<IconChevronRight size={18} />}
+          isDisabled={!hasNext}
+          radius="full"
+          size="sm"
+          variant="flat"
+          onPress={() => dispatch(setPage(page + 1))}
+        >
+          {t('common.next')}
+        </Button>
+      </div>
       <div className="space-y-6">
         {grouped.map(group => {
           const dateKey = group[0].date.split('T')[0]
@@ -169,38 +201,6 @@ export default function TransactionsList({ onEdit, onClone }: Props) {
             </div>
           )
         })}
-
-        <div className="flex justify-between items-center pt-4">
-          <Button
-            className="text-sm"
-            color="primary"
-            isDisabled={!hasPrev}
-            radius="full"
-            size="sm"
-            startContent={<IconChevronLeft size={18} />}
-            variant="flat"
-            onPress={() => dispatch(setPage(page - 1))}
-          >
-            {t('common.prev')}
-          </Button>
-
-          <span className="text-sm text-gray-500">
-            {page} / {totalPages}
-          </span>
-
-          <Button
-            className="text-sm"
-            color="primary"
-            endContent={<IconChevronRight size={18} />}
-            isDisabled={!hasNext}
-            radius="full"
-            size="sm"
-            variant="flat"
-            onPress={() => dispatch(setPage(page + 1))}
-          >
-            {t('common.next')}
-          </Button>
-        </div>
       </div>
       <YouSureModal
         description={t('transactions.delete_confirm_with_name', {
@@ -213,6 +213,10 @@ export default function TransactionsList({ onEdit, onClone }: Props) {
           if (!deleteTarget) return
           dispatch(deleteTransaction(deleteTarget.id))
           setDeleteTarget(null)
+          addToast({
+            color: 'success',
+            title: t('transactions.delete_success'),
+          })
         }}
       />
     </>

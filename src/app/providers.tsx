@@ -11,11 +11,13 @@ type Props = {
 }
 
 export function AppProviders({ children }: Props) {
+  const theme = localStorage.getItem('theme') ?? 'system'
+
   return (
     <Provider store={store}>
       <HeroUIProvider>
         <ToastProvider />
-        <ThemeProvider enableSystem attribute="class" defaultTheme="system">
+        <ThemeProvider enableSystem attribute="class" defaultTheme={theme}>
           {children}
         </ThemeProvider>
       </HeroUIProvider>

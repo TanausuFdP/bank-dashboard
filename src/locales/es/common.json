@@ -8,7 +8,12 @@
     "prev": "Anterior",
     "actions": "Acciones",
     "export": "Descargar CSV",
-    "import": "Importar CSV"
+    "import": "Importar CSV",
+    "undo": "Deshacer",
+    "redo": "Rehacer",
+    "open_filters": "Abrir filtros",
+    "settings": "Ajustes",
+    "close": "Cerrar"
   },
   "transactions": {
     "empty": "No hay transacciones todavía",
@@ -27,18 +32,29 @@
     "delete_confirm_with_name": "¿Seguro que quieres eliminar \"{{description}}\"?",
     "clone": "Duplicar",
     "search": "Buscar...",
-    "invalid_amount": "Introduce una cantidad válida",
     "all": "Todas",
     "import_success": "Transacciones importadas correctamente",
     "import_error": "Archivo CSV inválido",
     "import_no_new": "No hay nuevas transacciones para importar",
     "importing": "Importando transacciones...",
-    "imported_description": "{{imported}} importadas, {{skipped}} omitidas (duplicados)"
+    "imported_description": "{{imported}} importadas, {{skipped}} omitidas (duplicados)",
+    "add_success": "Transacción añadida",
+    "hidden_by_filters": "Permanece oculta por los filtros",
+    "cannot_save_yet": "Aún no puedes guardar",
+    "missing_description": "La descripción es obligatoria",
+    "missing_amount": "El importe es obligatorio",
+    "invalid_amount_desc": "El importe debe ser un número válido mayor que cero",
+    "invalid_amount": "Importe inválido",
+    "invalid_date": "La fecha no es correcta",
+    "insufficient_balance": "Saldo insuficiente. Tu balance actual es {{balance}}",
+    "update_success": "Transacción actualizada",
+    "delete_success": "Transacción eliminada"
   },
   "balance": {
     "title": "Balance",
     "income": "Ingresos",
-    "expenses": "Gastos"
+    "expenses": "Gastos",
+    "transactions": "{{n}} transacciones"
   },
   "filters_modal": {
     "title": "Filtros",
@@ -51,5 +67,13 @@
     "this_month": "Este mes",
     "this_year": "Este año",
     "clear": "Limpiar filtros"
+  },
+  "settings": {
+    "title": "Ajustes",
+    "language": "Idioma",
+    "theme": "Tema",
+    "theme_system": "Automático (sistema)",
+    "theme_light": "Claro",
+    "theme_dark": "Oscuro"
   }
 }
