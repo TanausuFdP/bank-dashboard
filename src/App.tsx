@@ -11,6 +11,7 @@ import {
   IconDownload,
   IconPlus,
   IconSearch,
+  IconSettings,
   IconUpload,
 } from '@tabler/icons-react'
 import { useTranslation } from 'react-i18next'
@@ -38,6 +39,7 @@ import { selectHasActiveFilters, selectMaxTransactionAmount } from './store/tran
 import FiltersModal from './components/FiltersModal'
 import { exportTransactionsToCsv } from './services/transactionsCsvExport'
 import { importTransactionsFromCsv } from './services/transactionCsvImport'
+import SettingsModal from './components/SettingsModal'
 
 function App() {
   const { t } = useTranslation()
@@ -54,6 +56,7 @@ function App() {
   const [isClone, setIsClone] = useState(false)
   const [filtersOpen, setFiltersOpen] = useState(false)
   const [isImporting, setIsImporting] = useState(false)
+  const [settingsOpen, setSettingsOpen] = useState(false)
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -178,14 +181,19 @@ function App() {
                   exportTransactionsToCsv(allTransactions)
                 } else if (key === 'import') {
                   fileInputRef.current?.click()
+                } else if (key === 'settings') {
+                  setSettingsOpen(true)
                 }
               }}
             >
               <DropdownItem key="export" startContent={<IconDownload size={18} />}>
                 {t('common.export')}
               </DropdownItem>
-              <DropdownItem key="import" startContent={<IconUpload size={18} />}>
+              <DropdownItem key="import" showDivider startContent={<IconUpload size={18} />}>
                 {t('common.import')}
+              </DropdownItem>
+              <DropdownItem key="settings" startContent={<IconSettings size={18} />}>
+                {t('common.settings')}
               </DropdownItem>
             </DropdownMenu>
           </Dropdown>
@@ -310,6 +318,8 @@ function App() {
           }
         }}
       />
+
+      <SettingsModal isOpen={settingsOpen} onClose={() => setSettingsOpen(false)} />
 
       <FiltersModal
         isOpen={filtersOpen}

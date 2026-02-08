@@ -11,7 +11,9 @@
     "import": "Importar CSV",
     "undo": "Deshacer",
     "redo": "Rehacer",
-    "open_filters": "Abrir filtros"
+    "open_filters": "Abrir filtros",
+    "settings": "Ajustes",
+    "close": "Cerrar"
   },
   "transactions": {
     "empty": "No hay transacciones todavía",
@@ -65,5 +67,13 @@
     "this_month": "Este mes",
     "this_year": "Este año",
     "clear": "Limpiar filtros"
+  },
+  "settings": {
+    "title": "Ajustes",
+    "language": "Idioma",
+    "theme": "Tema",
+    "theme_system": "Automático (sistema)",
+    "theme_light": "Claro",
+    "theme_dark": "Oscuro"
   }
 }
